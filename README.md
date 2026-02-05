@@ -1,63 +1,175 @@
-# Scribd Downloader
+<div align="center">
+  
+# 📚 Scribd-Downloader-js
 
-A versatile tool to download books and documents from Scribd embeds, supporting both Image and PDF formats. This tool works without a Premium account for documents that are available in embed mode.
+### 🚀 Download any document from Scribd as PDF or Images — for free!
 
-![Downloader Interface](docs/images/Downloader.PNG)
+<br/>
 
-## Features
+[![GitHub stars](https://img.shields.io/github/stars/AllLiveSupport/Scribd-Downloader-js?style=for-the-badge&logo=github&color=yellow)](https://github.com/AllLiveSupport/Scribd-Downloader-js/stargazers)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![User Script](https://img.shields.io/badge/User%20Script-Install-670000?style=for-the-badge&logo=tampermonkey&logoColor=white)](scribd.user.js)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com)
 
--   **Dual Download Modes**:
-    -   **Images**: Downloads each page as a high-quality JPEG image.
-    -   **PDF**: Automatically compiles all pages into a single PDF file (requires waiting for all pages to load).
--   **Non-Intrusive**: The button now acts as a **toggle**. Click once to open, click again to close.
--   **Page Restricted**: The script is now restricted to document pages and embeds. It will **not** appear on search, browse, or explore pages.
--   **Integrated**: Clicking the button launches the same powerful downloader control panel you are used to.
--   **Resume Capability**: Can resume downloads if interrupted (mostly for Image mode).
--   **PiP Support**: Uses a Picture-in-Picture hack to keep the script running even when the tab is in the background.
+<br/>
 
-## Disclaimer
+<img src="https://img.shields.io/badge/Chrome-Supported-success?style=flat-square&logo=googlechrome&logoColor=white"/>
+<img src="https://img.shields.io/badge/Firefox-Supported-success?style=flat-square&logo=firefox&logoColor=white"/>
+<img src="https://img.shields.io/badge/Edge-Supported-success?style=flat-square&logo=microsoftedge&logoColor=white"/>
 
-> [!IMPORTANT]
-> **Educational Purpose Only**: This tool is intended for educational purposes and for downloading documents you have the right to access (e.g., public domain content or "Open" documents).
->
-> **Respect Copyright**: Do not use this tool to download copyrighted material that you do not own or have permission to use. The authors are not responsible for any misuse of this tool.
+---
 
-## Usage
+**✨ Dual Mode • 🎯 Toggle Control • 🧹 Clean PDF Output • 🖼️ Image Export**
 
-### Method 1: Tampermonkey / Greasemonkey (Recommended)
+</div>
 
-This is the easiest way to use the downloader persistently.
+<br/>
 
-1.  Install the [Tampermonkey](https://www.tampermonkey.net/) extension for your browser.
-2.  Install the script: [**Click here to install**](scribd.user.js) (or manually create a new script and paste the content of `scribd.user.js`).
-3.  Go to any Scribd document page.
-4.  Look for a floating **Download** button at the bottom right of the screen.
-5.  Click it to **toggle** (open/close) the Downloader panel.
+---
 
-### Method 2: Bookmarklet
+## 🎯 Three Methods
 
-1.  Create a new bookmark in your browser.
-2.  Name it "Scribd Downloader".
-3.  In the URL/Address field, paste the entire content of `Scribd Downloader Bookmark.txt`.
-4.  When viewing a Scribd document, click the bookmark to launch the tool.
+| Method | Best For | Difficulty |
+|:-------|:---------|:-----------|
+| 🌐 **Tampermonkey** | Quick & easy browser use (Toggle Button) | ⭐ Easy |
+| 🔖 **Bookmarklet** | Quick use without extensions | ⭐ Easy |
+| 💻 **Console** | Developers, one-time use | ⭐⭐ Medium |
 
-### Method 3: Console
+---
 
-1.  Open the Developer Tools (F12 or Ctrl+Shift+I).
-2.  Go to the **Console** tab.
-3.  Paste the code from `Scribd Downloader.txt` and press Enter.
-4.  The panel will appear on the page.
+<br/>
 
-## How to Use
+## 🌐 Method 1: Tampermonkey (Recommended)
 
-1.  **Launch the tool** using one of the methods above.
-2.  **Select Mode**: Choose between `IMAGES` or `PDF`.
-3.  **Set Range**: You can adjust the Start and End page numbers if you only want a specific section.
-4.  **Start Download**: Click the **START DOWNLOAD** button.
-5.  **Important**: A Picture-in-Picture (PiP) window will open. **Do not close this window!** It keeps the script running smoothly even if you switch tabs.
+### Step 1: Install Tampermonkey Extension
 
-![PiP Window](docs/images/PIP.PNG)
+| Browser | Install Link |
+|:-------:|:------------:|
+| <img src="https://img.shields.io/badge/Chrome-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/> | [Install](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) |
+| <img src="https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/> | [Install](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) |
+| <img src="https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=microsoftedge&logoColor=white"/> | [Install](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd) |
 
-## License
+### Step 2: Install the Script
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1. Open [**`scribd.user.js`**](scribd.user.js) in this repository.
+2. Click the **"Raw"** button.
+3. Tampermonkey will automatically detect the script and ask to install. Click **"Install"**.
+
+### Step 3: Use It!
+
+1. 🌐 Go to any **Scribd document** page.
+2. 📥 Tap the floating green **"Download"** button at the bottom-right.
+3. ⚙️ Select **IMAGES** or **PDF** mode.
+4. 🚀 Adjust page range if needed and click **"START DOWNLOAD"**.
+5. ⏳ **Keep the PiP window open!** It ensures the download continues in the background.
+
+<br/>
+
+---
+
+## 🔖 Method 2: Bookmarklet
+
+1.  **Create Bookmark**: Add a new bookmark to your browser.
+2.  **Name**: Set it to `Scribd Downloader`.
+3.  **URL**: Paste everything from [**`Scribd Downloader Bookmark.txt`**](Scribd%20Downloader%20Bookmark.txt).
+4.  **Action**: Click the bookmark while on a Scribd page to launch.
+
+<br/>
+
+---
+
+## 💻 Method 3: Console
+
+1.  **F12**: Open Developer Tools (Console tab).
+2.  **Paste**: Copy code from [**`Scribd Downloader.txt`**](Scribd%20Downloader.txt).
+3.  **Enter**: Run the script to show the panel.
+
+<br/>
+
+---
+
+## 🛠️ Features Detailed
+
+- 🖼️ **Image Mode**: Saves every page as a `.jpg` file. Great for preserving exact layout.
+- 📄 **PDF Mode**: Combines all captured images into a single, high-quality PDF.
+- 📱 **PiP Background Hack**: A small Picture-in-Picture window opens to keep the browser process active even when the tab is not in focus.
+- 🔄 **Toggle Button**: (Tampermonkey only) Easily show/hide the downloader UI without refreshing the page.
+- 🚫 **No Premium Required**: Works on all publicly embeddable documents.
+
+<br/>
+
+---
+
+## 🖨️ PDF Generation Settings
+
+> For the best output quality:
+
+| Setting | Value |
+|:--------|:------|
+| **PDF Library** | `jsPDF` (Auto-loaded) |
+| **Download Wait** | `500ms` (Configurable) |
+| **Retry Attempts** | `3 times` |
+
+<br/>
+
+---
+
+## 📂 Project Structure
+
+```bash
+📦 Scribd-Downloader-js
+ ┣ 📂 docs/images
+ ┃ ┣ 🖼️ Downloader.PNG
+ ┃ ┗ 🖼️ PIP.PNG
+ ┣ 📜 LICENSE
+ ┣ 📜 README.md
+ ┣ 📜 scribd.user.js                # Tampermonkey Script
+ ┣ 📜 Scribd Downloader.txt         # Console Script
+ ┗ 📜 Scribd Downloader Bookmark.txt # Bookmarklet Script
+```
+
+<br/>
+
+---
+
+## ⚠️ Disclaimer
+
+> [!CAUTION]
+> **Legal Notice:** This tool is provided for **personal and educational purposes only**.
+
+- 📚 **Respect Copyright:** Do not use this tool to download material you do not have rights to.
+- 👤 **Responsibility:** You are solely responsible for your actions and compliance with Scribd's Terms of Service.
+- 🚫 **No Liability:** The authors are not responsible for any misuse.
+
+<br/>
+
+---
+
+<details>
+<summary><h2>🔧 How It Works (For Developers)</h2></summary>
+
+### 🎯 Core Concept
+
+Scribd's content is often accessible via the `/embeds/` endpoint. This tool:
+1.  **Extracts** the document ID from the URL.
+2.  **Wraps** the content in a custom UI panel.
+3.  **Automates Scrolling**: Triggers lazy-loading of all pages.
+4.  **Captures Images**: Intercepts the `.absimg` elements from the DOM.
+5.  **Generates PDF**: Uses `jsPDF` to stitch images into a single document.
+6.  **Background Survival**: Uses a `canvas` + `video` stream in a PiP window to prevent the browser from throttling the script when the tab is hidden.
+
+</details>
+
+<br/>
+
+---
+
+<div align="center">
+
+### ⭐ Star this repo if it helped you!
+
+<br/>
+
+[![GitHub](https://img.shields.io/badge/AllLiveSupport-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AllLiveSupport)
+
+</div>
