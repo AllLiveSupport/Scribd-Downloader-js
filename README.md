@@ -9,7 +9,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/AllLiveSupport/Scribd-Downloader-js?style=for-the-badge&logo=github&color=yellow)](https://github.com/AllLiveSupport/Scribd-Downloader-js/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![User Script](https://img.shields.io/badge/User%20Script-Install-670000?style=for-the-badge&logo=tampermonkey&logoColor=white)](scribd.user.js)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/alllivesupport)
 
 <br/>
 
