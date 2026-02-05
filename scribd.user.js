@@ -1,0 +1,509 @@
+// ==UserScript==
+// @name         Scribd Downloader Button
+// @namespace    http://tampermonkey.net/
+// @version      2.1
+// @description  Adds a toggle button to open/close the Scribd Downloader tool, restricted to document pages.
+// @author       You
+// @match        https://www.scribd.com/doc/*
+// @match        https://www.scribd.com/document/*
+// @match        https://www.scribd.com/presentation/*
+// @match        https://www.scribd.com/embeds/*/content*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    // Extra check to ensure we are not on a search or listing page
+    const forbiddenPaths = ['/search', '/browse', '/explore'];
+    if (forbiddenPaths.some(path => window.location.pathname.startsWith(path))) {
+        return;
+    }
+
+    const panelId = 'sd-panel-v2.0';
+
+    // Create Floating Button
+    const btn = document.createElement('button');
+    btn.innerHTML = '&#11015; Download'; // Down arrow symbol + Download
+    btn.title = 'Toggle Scribd Downloader';
+    btn.style.position = 'fixed';
+    btn.style.bottom = '20px';
+    btn.style.right = '20px';
+    btn.style.zIndex = '999999';
+    btn.style.padding = '12px 20px';
+    btn.style.backgroundColor = '#1abc9c';
+    btn.style.color = 'white';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '30px';
+    btn.style.cursor = 'pointer';
+    btn.style.fontSize = '14px';
+    btn.style.fontWeight = 'bold';
+    btn.style.fontFamily = 'sans-serif';
+    btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+    btn.style.transition = 'transform 0.2s, background 0.2s';
+
+    btn.onmouseover = () => {
+        btn.style.transform = 'scale(1.05)';
+        btn.style.backgroundColor = '#16a085';
+    };
+    btn.onmouseout = () => {
+        btn.style.transform = 'scale(1)';
+        btn.style.backgroundColor = '#1abc9c';
+    };
+
+    btn.onclick = async function () {
+        const existingPanel = document.getElementById(panelId);
+        if (existingPanel) {
+            existingPanel.remove();
+            return;
+        }
+
+        /* --- LOAD JSPDF LIBRARY --- */
+        if (!window.jspdf) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+
+        /* --- CAPTURE TITLE FIRST --- */
+        const originalTitle = document.title;
+
+        /* --- CONFIGURATION --- */
+        const config = {
+            scrollWait: 1500,
+            downloadWait: 500,
+            retryAttempts: 3,
+            retryDelay: 1000,
+            selectors: {
+                pageContainer: (num) => `div#page${num}`,
+                image: 'img.absimg',
+                pageCount: ['div[data-e2e="total-pages"]', '.pageCount'],
+                titleLink: 'a[data-e2e="full-screen-embed"]'
+            }
+        };
+
+        /* --- HELPERS --- */
+        function getBookTitle() {
+            try {
+                const link = document.querySelector(config.selectors.titleLink);
+                if (link && link.href) {
+                    const parts = link.href.split('/');
+                    let slug = parts[5] || parts[4] || "Scribd_Doc";
+                    slug = slug.split('#')[0].split('?')[0];
+                    return slug.replace(/[^a-zA-Z0-9\-_]/g, '_');
+                }
+            } catch (e) { }
+            return originalTitle.replace(/[^a-zA-Z0-9\-_ ]/g, '').trim() || "Scribd_Doc";
+        }
+
+        function getTotalPages() {
+            try {
+                const selectors = Array.isArray(config.selectors.pageCount)
+                    ? config.selectors.pageCount
+                    : [config.selectors.pageCount];
+
+                for (let selector of selectors) {
+                    const el = document.querySelector(selector);
+                    if (el && el.innerText) {
+                        const txt = el.innerText.trim();
+                        const num = parseInt(txt.replace('/', '').trim());
+                        if (!isNaN(num) && num > 0) {
+                            return num;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Error detecting total pages:", e);
+            }
+            return 9999;
+        }
+
+        /* --- URL HELPERS --- */
+        function isContentMode() {
+            return window.location.href.includes('/embeds/') && window.location.href.includes('/content');
+        }
+
+        function getDocumentId() {
+            const url = window.location.href;
+            const match = url.match(/(?:document|embeds)\/(\d+)/);
+            return match ? match[1] : null;
+        }
+
+        function goToContentMode() {
+            const docId = getDocumentId();
+            if (docId) {
+                const embedUrl = `https://www.scribd.com/embeds/${docId}/content`;
+                window.location.href = embedUrl;
+            } else {
+                alert('Could not detect document ID from URL.');
+            }
+        }
+
+        /* --- UI PANEL --- */
+        const initialMax = getTotalPages();
+        const bookName = getBookTitle();
+        const inContentMode = isContentMode();
+
+        const panel = document.createElement('div');
+        panel.id = panelId;
+        panel.style.cssText = "position:fixed;top:10px;right:10px;width:320px;background:#1e1e1e;color:#fff;padding:15px;border:2px solid #1abc9c;z-index:2147483647;font-family:sans-serif;box-shadow:0 0 20px rgba(0,0,0,0.8);font-size:12px;border-radius:8px;";
+
+        panel.innerHTML = `
+            <h3 style="margin:0 0 10px;text-align:center;border-bottom:1px solid #333;padding-bottom:8px;color:#1abc9c;font-weight:bold;">SCRIBD DOWNLOADER <span style="font-size:10px;">v2.0</span></h3>
+            
+            <button id="sd-content" ${inContentMode ? 'disabled' : ''} style="width:100%;background:${inContentMode ? '#27ae60' : '#e67e22'};color:#fff;border:none;padding:10px;cursor:${inContentMode ? 'not-allowed' : 'pointer'};font-weight:bold;font-size:12px;border-radius:4px;margin-bottom:10px;opacity:${inContentMode ? '0.7' : '1'};">
+                ${inContentMode ? '✓ CONTENT MODE ACTIVE' : 'GO TO CONTENT MODE'}
+            </button>
+
+            <div style="margin-bottom:10px;background:#2c2c2c;padding:8px;border-radius:4px;">
+                <div style="color:#aaa;font-size:10px;margin-bottom:5px;text-align:center;">DOWNLOAD MODE</div>
+                <div style="display:flex;gap:5px;">
+                    <button id="sd-mode-images" style="flex:1;background:#3498db;color:#fff;border:none;padding:8px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:11px;">IMAGES</button>
+                    <button id="sd-mode-pdf" style="flex:1;background:#9b59b6;color:#fff;border:none;padding:8px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:11px;">PDF</button>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:10px;background:#2c2c2c;padding:8px;border-radius:4px;display:flex;justify-content:space-between;">
+                <div style="text-align:center;">
+                    <span style="color:#aaa;display:block;margin-bottom:2px;">Start Page</span>
+                    <input type="number" id="sd-start" value="1" style="width:50px;background:#444;color:#fff;border:1px solid #555;text-align:center;">
+                </div>
+                <div style="text-align:center;">
+                    <span style="color:#aaa;display:block;margin-bottom:2px;">Total Pages</span>
+                    <input type="number" id="sd-end" value="${initialMax}" style="width:50px;background:#444;color:#fff;border:1px solid #555;text-align:center;">
+                </div>
+            </div>
+
+            <div style="margin-bottom:10px;color:#888;font-size:10px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                Name: <span style="color:#fff;">${bookName}</span>
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                    <span id="sd-progress-text" style="color:#aaa;font-size:10px;">Ready...</span>
+                    <span id="sd-progress-percent" style="color:#1abc9c;font-size:10px;font-weight:bold;">0%</span>
+                </div>
+                <div style="background:#333;height:8px;border-radius:4px;overflow:hidden;">
+                    <div id="sd-progress-bar" style="background:linear-gradient(90deg, #1abc9c, #16a085);height:100%;width:0%;transition:width 0.3s;"></div>
+                </div>
+            </div>
+
+            <div id="sd-status" style="margin-bottom:10px;color:#1abc9c;padding:5px;border:1px solid #333;min-height:20px;white-space:nowrap;overflow:hidden;">Ready...</div>
+            
+            <button id="sd-go" style="width:100%;background:#1abc9c;color:#fff;border:none;padding:12px;cursor:pointer;font-weight:bold;font-size:14px;border-radius:4px;">START DOWNLOAD</button>
+            <div style="font-size:10px;color:#666;text-align:center;margin-top:5px;">Keep PiP window open!</div>
+        `;
+        document.body.appendChild(panel);
+
+        /* --- CONTENT MODE BUTTON HANDLER --- */
+        const contentBtn = document.getElementById('sd-content');
+        if (contentBtn && !inContentMode) {
+            contentBtn.onclick = goToContentMode;
+        }
+
+        /* --- VARIABLES --- */
+        let isRunning = false;
+        let pageCounter = 1;
+        let maxPages = initialMax;
+        let downloadMode = 'images'; // 'images' or 'pdf'
+        let pdfPages = []; // Store images for PDF
+
+        const statusEl = document.getElementById('sd-status');
+        const goBtn = document.getElementById('sd-go');
+        const startInput = document.getElementById('sd-start');
+        const endInput = document.getElementById('sd-end');
+        const progressBar = document.getElementById('sd-progress-bar');
+        const progressText = document.getElementById('sd-progress-text');
+        const progressPercent = document.getElementById('sd-progress-percent');
+        const modeImagesBtn = document.getElementById('sd-mode-images');
+        const modePdfBtn = document.getElementById('sd-mode-pdf');
+
+        /* --- MODE SELECTION --- */
+        function setMode(mode) {
+            downloadMode = mode;
+            if (mode === 'images') {
+                modeImagesBtn.style.background = '#3498db';
+                modeImagesBtn.style.opacity = '1';
+                modePdfBtn.style.background = '#555';
+                modePdfBtn.style.opacity = '0.5';
+            } else {
+                modePdfBtn.style.background = '#9b59b6';
+                modePdfBtn.style.opacity = '1';
+                modeImagesBtn.style.background = '#555';
+                modeImagesBtn.style.opacity = '0.5';
+            }
+        }
+
+        modeImagesBtn.onclick = () => setMode('images');
+        modePdfBtn.onclick = () => setMode('pdf');
+        setMode('images'); // Default
+
+        const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+        const log = (msg, color = "#1abc9c") => {
+            statusEl.innerText = msg;
+            statusEl.style.color = color;
+            if (isRunning) document.title = `[${pageCounter}/${maxPages}] ${msg}`;
+        };
+
+        const updateProgress = () => {
+            const progress = ((pageCounter - parseInt(startInput.value)) / (maxPages - parseInt(startInput.value) + 1)) * 100;
+            const percent = Math.min(100, Math.max(0, progress));
+            progressBar.style.width = percent + '%';
+            progressPercent.innerText = Math.round(percent) + '%';
+            progressText.innerText = `Page ${pageCounter} of ${maxPages}`;
+        };
+
+        /* --- PIP HACK --- */
+        async function activatePiP() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 300;
+                canvas.height = 100;
+                const ctx = canvas.getContext('2d');
+                const interval = setInterval(() => {
+                    if (!isRunning) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, 300, 100);
+                    ctx.fillStyle = '#1abc9c';
+                    ctx.font = '20px monospace';
+                    ctx.fillText(`Page: ${pageCounter} / ${maxPages}`, 20, 55);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillText("Background Active", 20, 80);
+                }, 1000);
+                const video = document.createElement('video');
+                video.srcObject = canvas.captureStream(10);
+                video.autoplay = true;
+                video.onloadedmetadata = async () => {
+                    try {
+                        await video.play();
+                        await video.requestPictureInPicture();
+                    } catch (e) {
+                        console.log("PiP activation failed:", e);
+                    }
+                };
+            } catch (e) {
+                console.log("PiP not supported:", e);
+            }
+        }
+
+        /* --- DOWNLOAD LOGIC --- */
+        async function downloadImage(imgSrc, pageNum) {
+            return new Promise(async (resolve) => {
+                try {
+                    const response = await fetch(imgSrc);
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${bookName}_Page_${String(pageNum).padStart(3, '0')}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        resolve(true);
+                    }, 100);
+                } catch (e) {
+                    console.error("Download error:", e);
+                    resolve(false);
+                }
+            });
+        }
+
+        async function addToPdf(imgSrc) {
+            return new Promise(async (resolve) => {
+                try {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => {
+                        pdfPages.push({
+                            img: img,
+                            width: img.width,
+                            height: img.height
+                        });
+                        resolve(true);
+                    };
+                    img.onerror = () => resolve(false);
+                    img.src = imgSrc;
+                } catch (e) {
+                    console.error("PDF add error:", e);
+                    resolve(false);
+                }
+            });
+        }
+
+        async function generatePDF() {
+            try {
+                log(`Generating PDF from ${pdfPages.length} pages...`, "#9b59b6");
+                const { jsPDF } = window.jspdf;
+
+                if (pdfPages.length === 0) {
+                    alert("No pages to export!");
+                    return;
+                }
+
+                // Use first page dimensions for PDF size
+                const firstPage = pdfPages[0];
+                const pdfWidth = firstPage.width * 0.264583; // px to mm
+                const pdfHeight = firstPage.height * 0.264583;
+
+                const pdf = new jsPDF({
+                    orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
+                    unit: 'mm',
+                    format: [pdfWidth, pdfHeight]
+                });
+
+                for (let i = 0; i < pdfPages.length; i++) {
+                    const page = pdfPages[i];
+                    if (i > 0) pdf.addPage([pdfWidth, pdfHeight]);
+
+                    pdf.addImage(
+                        page.img,
+                        'JPEG',
+                        0,
+                        0,
+                        pdfWidth,
+                        pdfHeight,
+                        undefined,
+                        'FAST'
+                    );
+
+                    log(`Adding to PDF: ${i + 1}/${pdfPages.length}`, "#9b59b6");
+                }
+
+                pdf.save(`${bookName}.pdf`);
+                log("PDF Downloaded!", "#27ae60");
+                alert("PDF generated successfully!");
+            } catch (e) {
+                console.error("PDF generation error:", e);
+                alert("PDF generation failed: " + e.message);
+            }
+        }
+
+        /* --- MAIN LOOP --- */
+        async function startLoop() {
+            pdfPages = []; // Reset PDF pages
+
+            while (isRunning) {
+                if (pageCounter > maxPages) {
+                    isRunning = false;
+
+                    if (downloadMode === 'pdf') {
+                        await generatePDF();
+                    }
+
+                    alert("Download Complete!");
+                    goBtn.innerText = "COMPLETED";
+                    goBtn.style.background = "#27ae60";
+                    progressBar.style.width = "100%";
+                    progressPercent.innerText = "100%";
+                    break;
+                }
+
+                updateProgress();
+                log(`Processing Page ${pageCounter}...`, "#fff");
+
+                const pageId = config.selectors.pageContainer(pageCounter);
+                let pageEl = document.querySelector(pageId);
+
+                if (!pageEl) {
+                    log(`Page ${pageCounter} not found. Scrolling...`, "#f39c12");
+                    window.scrollBy(0, 500);
+                    await wait(config.scrollWait);
+
+                    pageEl = document.querySelector(pageId);
+                    if (!pageEl) {
+                        log(`Page ${pageCounter} missing. Stopping.`, "#e74c3c");
+                        isRunning = false;
+                        break;
+                    }
+                }
+
+                pageEl.scrollIntoView({ block: "center", behavior: "auto" });
+                await wait(config.scrollWait);
+
+                let imgEl = null;
+                let retryCount = 0;
+
+                while (retryCount < config.retryAttempts && !imgEl) {
+                    const candidate = pageEl.querySelector(config.selectors.image);
+
+                    if (candidate && candidate.src && !candidate.src.includes('loading') && candidate.complete) {
+                        imgEl = candidate;
+                        break;
+                    } else {
+                        log(`Waiting for image (${retryCount + 1}/${config.retryAttempts})...`, "#f39c12");
+                        await wait(config.retryDelay);
+                        retryCount++;
+                    }
+                }
+
+                if (imgEl && imgEl.src) {
+                    if (downloadMode === 'images') {
+                        log(`Downloading Page ${pageCounter}...`, "#27ae60");
+                        const success = await downloadImage(imgEl.src, pageCounter);
+
+                        if (success) {
+                            pageCounter++;
+                            startInput.value = pageCounter;
+                            await wait(config.downloadWait);
+                        } else {
+                            log(`Download failed for Page ${pageCounter}. Retrying...`, "#e74c3c");
+                            await wait(1000);
+                        }
+                    } else {
+                        log(`Collecting Page ${pageCounter} (${pdfPages.length + 1} collected)...`, "#9b59b6");
+                        const success = await addToPdf(imgEl.src);
+
+                        if (success) {
+                            pageCounter++;
+                            startInput.value = pageCounter;
+                            await wait(config.downloadWait);
+                        } else {
+                            log(`Failed to collect Page ${pageCounter}. Retrying...`, "#e74c3c");
+                            await wait(1000);
+                        }
+                    }
+                } else {
+                    log(`Skipping Page ${pageCounter} (No Image)`, "#e67e22");
+                    pageCounter++;
+                    startInput.value = pageCounter;
+                }
+            }
+        }
+
+        /* --- START HANDLER --- */
+        goBtn.onclick = async () => {
+            if (isRunning) {
+                isRunning = false;
+                goBtn.innerText = "RESUME";
+                goBtn.style.background = "#1abc9c";
+                return;
+            }
+
+            await activatePiP();
+
+            isRunning = true;
+            pageCounter = parseInt(startInput.value);
+            maxPages = parseInt(endInput.value);
+
+            goBtn.innerText = "STOP";
+            goBtn.style.background = "#e74c3c";
+            log("Started!", "#fff");
+            updateProgress();
+
+            startLoop();
+        };
+    };
+
+    document.body.appendChild(btn);
+
+})();
