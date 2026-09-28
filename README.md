@@ -107,7 +107,7 @@
 | Setting | Value |
 |:--------|:------|
 | **PDF Library** | `jsPDF` (Auto-loaded) |
-| **Download Wait** | `500ms` (Configurable) |
+| **Parallel Downloads** | `4` (Bookmarklet / Console, adjustable in the panel) |
 | **Retry Attempts** | `3 times` |
 
 <br/>
