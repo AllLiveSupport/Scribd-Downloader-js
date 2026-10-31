@@ -2,24 +2,29 @@
   
 # 📚 Scribd-Downloader-js
 
-### 🚀 Download any document from Scribd as PDF or Images — for free!
+### 🚀 Download any document from Scribd as crisp PDF or Images — 100% Free!
 
 <br/>
 
 [![GitHub stars](https://img.shields.io/github/stars/AllLiveSupport/Scribd-Downloader-js?style=for-the-badge&logo=github&color=yellow)](https://github.com/AllLiveSupport/Scribd-Downloader-js/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![User Script](https://img.shields.io/badge/User%20Script-Install-670000?style=for-the-badge&logo=tampermonkey&logoColor=white)](scribd.user.js)
-
+[![User Script](https://img.shields.io/badge/User%20Script-v3.5%20Ultra-1abc9c?style=for-the-badge&logo=tampermonkey&logoColor=white)](scribd.user.js)
 
 <br/>
 
 <img src="https://img.shields.io/badge/Chrome-Supported-success?style=flat-square&logo=googlechrome&logoColor=white"/>
 <img src="https://img.shields.io/badge/Firefox-Supported-success?style=flat-square&logo=firefox&logoColor=white"/>
 <img src="https://img.shields.io/badge/Edge-Supported-success?style=flat-square&logo=microsoftedge&logoColor=white"/>
+<img src="https://img.shields.io/badge/Smart%20Detection-Image%20vs%20DOCX-blueviolet?style=flat-square"/>
+<img src="https://img.shields.io/badge/Full%20Bleed%20PDF-Per--Page%20Exact%20Size-brightgreen?style=flat-square"/>
 
 ---
 
-**✨ Dual Mode • 🎯 Toggle Control • 🧹 Clean PDF Output • 🖼️ Image Export**
+**✨ Smart Engine • 🎯 Auto Book vs DOCX Detection • 📐 Full-Bleed Landscape/Portrait PDF • 🚀 Zero A4 Margin Clipping**
+
+<br/><br/>
+
+<img src="docs/images/Downloader.png" alt="Scribd Downloader Ultra v3.5" width="360" style="border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);"/>
 
 </div>
 
@@ -27,13 +32,23 @@
 
 ---
 
+## ⚡ What's New in v3.5 ULTRA?
+
+- 📚 **Kitaplar Modu Varsayılan (Tam Sayfa / Orijinal Boyut)**: Her sayfa kendi orijinal boyutunda ve yönünde (kapak yatay, sayfalar dikey) A4 sınırı veya kenar boşluğu olmadan sıfır kayıpla direkt indirilir.
+- 🧠 **Hatasız Belge Tespiti**: KPSS, taranmış kitaplar, romanlar ve sunumlar 1px kırpma sınırlarına takılmadan anında `📚 RESİMLİ KİTAP (Tam Sayfa)` olarak tanınır.
+- 📝 **İsteğe Bağlı Vektör Baskı**: Yalnızca gerçek Word/DOCX ve vektörel tablolu metinler için kullanıcı istediğinde tek tıkla `VEKTÖR BASKI` seçilebilir.
+- 📐 **Dinamik Yatay/Dikey Eşleme**: Yatay kapaklar ve dikey sayfalar PDF içerisinde tam sayfa yerleşir, beyaz kenarlık bırakmaz.
+- 🔤 **Otomatik Dosya Adı**: İndirilen PDF veya baskı penceresi gerçek kitap adını alır (`document.title` kilitlenmesi).
+
+---
+
 ## 🎯 Three Methods
 
-| Method | Best For | Difficulty |
-|:-------|:---------|:-----------|
-| 🌐 **Tampermonkey** | Quick & easy browser use (Toggle Button) | ⭐ Easy |
-| 🔖 **Bookmarklet** | Quick use without extensions | ⭐ Easy |
-| 💻 **Console** | Developers, one-time use | ⭐⭐ Medium |
+| Method | Best For | Difficulty | Engine |
+|:-------|:---------|:-----------|:-------|
+| 🌐 **Tampermonkey** | Automatic launcher button, easiest (Recommended) | ⭐ Easy | **v3.0 ULTRA** (Hybrid) |
+| 💻 **Console** | Developers, one-off use via F12 | ⭐⭐ Medium | **v3.0 ULTRA** (Hybrid) |
+| 🔖 **Bookmarklet** | Quick execution without extensions | ⭐ Easy | **v3.0 ULTRA** (Hybrid) |
 
 ---
 
@@ -53,15 +68,15 @@
 
 1. Open [**`scribd.user.js`**](scribd.user.js) in this repository.
 2. Click the **"Raw"** button.
-3. Tampermonkey will automatically detect the script and ask to install. Click **"Install"**.
+3. Tampermonkey will automatically detect the script and prompt to install. Click **"Install"**.
 
-### Step 3: Use It!
+### Step 3: Usage
 
-1. 🌐 Go to any **Scribd document** page.
-2. 📥 Tap the floating green **"Download"** button at the bottom-right.
-3. ⚙️ Select **IMAGES** or **PDF** mode.
-4. 🚀 Adjust page range if needed and click **"START DOWNLOAD"**.
-5. ⏳ **Keep the PiP window open!** It ensures the download continues in the background.
+1. 🌐 Navigate to any document on Scribd.
+2. 📥 Click the floating green **"Download"** button at the bottom-right.
+3. ⚡ If prompted, switch to **Content Mode** for the best unblurred resolution.
+4. ⚙️ Select **📄 PDF** or **🖼️ IMAGES** mode.
+5. 🚀 Click **"START DOWNLOAD"**. Keep the PiP window open to allow seamless background processing!
 
 <br/>
 
@@ -69,10 +84,10 @@
 
 ## 🔖 Method 2: Bookmarklet
 
-1.  **Create Bookmark**: Add a new bookmark to your browser.
-2.  **Name**: Set it to `Scribd Downloader`.
-3.  **URL**: Paste everything from [**`Scribd Downloader Bookmark.txt`**](Scribd%20Downloader%20Bookmark.txt).
-4.  **Action**: Click the bookmark while on a Scribd page to launch.
+1. **Create Bookmark**: Add a new bookmark to your browser bookmark bar.
+2. **Name**: Set it to `Scribd Downloader`.
+3. **URL**: Copy and paste everything from [**`Scribd Downloader Bookmark.txt`**](Scribd%20Downloader%20Bookmark.txt).
+4. **Action**: Click the bookmark while viewing any Scribd document to launch the downloader panel.
 
 <br/>
 
@@ -80,9 +95,9 @@
 
 ## 💻 Method 3: Console
 
-1.  **F12**: Open Developer Tools (Console tab).
-2.  **Paste**: Copy code from [**`Scribd Downloader.txt`**](Scribd%20Downloader.txt).
-3.  **Enter**: Run the script to show the panel.
+1. **F12**: Open Developer Tools (`F12` or `Ctrl + Shift + I`) and switch to the **Console** tab.
+2. **Paste**: Copy all code from [**`Scribd Downloader.txt`**](Scribd%20Downloader.txt).
+3. **Enter**: Paste and press `Enter` to display the panel.
 
 <br/>
 
@@ -90,25 +105,11 @@
 
 ## 🛠️ Features Detailed
 
-- 🖼️ **Image Mode**: Saves every page as a `.jpg` file. Great for preserving exact layout.
-- 📄 **PDF Mode**: Combines all captured images into a single, high-quality PDF.
-- 📱 **PiP Background Hack**: A small Picture-in-Picture window opens to keep the browser process active even when the tab is not in focus.
-- 🔄 **Toggle Button**: (Tampermonkey only) Easily show/hide the downloader UI without refreshing the page.
-- 🚫 **No Premium Required**: Works on all publicly embeddable documents.
-
-<br/>
-
----
-
-## 🖨️ PDF Generation Settings
-
-> For the best output quality:
-
-| Setting | Value |
-|:--------|:------|
-| **PDF Library** | `jsPDF` (Auto-loaded) |
-| **Download Wait** | `500ms` (Configurable) |
-| **Retry Attempts** | `3 times` |
+- 📄 **PDF Mode**: Combines all captured high-resolution pages into a single, clean PDF file with custom page dimensions.
+- 🖼️ **Image Mode**: Saves individual high-quality `.jpg` pages.
+- 🧠 **Hybrid Engine**: Direct fast-path for image-only books; 2x High-DPI DOM Canvas snapshot for DOCX, Word, tables, and formula sheets.
+- 📱 **PiP Background Survival**: PiP canvas video stream keeps the browser tab active when navigating to other tabs or windows.
+- 🔓 **No Paywall Barrier**: Works on all embeddable Scribd content.
 
 <br/>
 
@@ -119,13 +120,13 @@
 ```bash
 📦 Scribd-Downloader-js
  ┣ 📂 docs/images
- ┃ ┣ 🖼️ Downloader.PNG
+ ┃ ┣ 🖼️ Downloader.png
  ┃ ┗ 🖼️ PIP.PNG
  ┣ 📜 LICENSE
  ┣ 📜 README.md
- ┣ 📜 scribd.user.js                # Tampermonkey Script
- ┣ 📜 Scribd Downloader.txt         # Console Script
- ┗ 📜 Scribd Downloader Bookmark.txt # Bookmarklet Script
+ ┣ 📜 scribd.user.js                 # Tampermonkey Userscript (v3.5 ULTRA)
+ ┣ 📜 Scribd Downloader.txt          # Developer Console Script (v3.5 ULTRA)
+ ┗ 📜 Scribd Downloader Bookmark.txt  # Bookmarklet Script (v3.5 ULTRA)
 ```
 
 <br/>
@@ -135,32 +136,9 @@
 ## ⚠️ Disclaimer
 
 > [!CAUTION]
-> **Legal Notice:** This tool is provided for **personal and educational purposes only**.
-
-- 📚 **Respect Copyright:** Do not use this tool to download material you do not have rights to.
-- 👤 **Responsibility:** You are solely responsible for your actions and compliance with Scribd's Terms of Service.
-- 🚫 **No Liability:** The authors are not responsible for any misuse.
-
-<br/>
-
----
-
-<details>
-<summary><h2>🔧 How It Works (For Developers)</h2></summary>
-
-### 🎯 Core Concept
-
-Scribd's content is often accessible via the `/embeds/` endpoint. This tool:
-1.  **Extracts** the document ID from the URL.
-2.  **Wraps** the content in a custom UI panel.
-3.  **Automates Scrolling**: Triggers lazy-loading of all pages.
-4.  **Captures Images**: Intercepts the `.absimg` elements from the DOM.
-5.  **Generates PDF**: Uses `jsPDF` to stitch images into a single document.
-6.  **Background Survival**: Uses a `canvas` + `video` stream in a PiP window to prevent the browser from throttling the script when the tab is hidden.
-
-</details>
-
-<br/>
+> **Legal Notice:** This tool is provided for **personal, research, and educational backup purposes only**.
+> - Respect copyright laws and original authors.
+> - You are responsible for your own actions and adherence to Scribd's Terms of Service.
 
 ---
 

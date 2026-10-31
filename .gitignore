@@ -1,0 +1,7 @@
+# Memory bank (Local AI documentation only - not for repo)
+memory-bank/
+
+# OS / Editor temporary files
+.DS_Store
+Thumbs.db
+*~
