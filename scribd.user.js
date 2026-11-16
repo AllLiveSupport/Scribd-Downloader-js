@@ -1,13 +1,17 @@
 // ==UserScript==
 // @name         Scribd Downloader Ultra
-// @namespace    https://github.com/AllLiveSupport
+// @namespace    https://github.com/Oscar-Quiloulou
 // @version      3.5
-// @description  Intelligent multi-mode downloader for Scribd. Distinguishes between Scanned/Image Books (exact page aspect ratio, landscape/portrait matching, zero A4 margins) and DOCX/Text Vector documents.
-// @author       AllLiveSupport
+// @description  Intelligent multi-mode downloader for Scribd. Distinguishes between Scanned/Image Books (exact page aspect ratio, landscape/portrait matching, zero A4 margins) and DOCX/Text Vector documents. Original Script : AllLiveSupport
+// @author       Oscar-Quiloulou
 // @match        https://www.scribd.com/doc/*
 // @match        https://www.scribd.com/document/*
 // @match        https://www.scribd.com/presentation/*
 // @match        https://www.scribd.com/embeds/*/content*
+// @match        https://fr.scribd.com/doc/*
+// @match        https://fr.scribd.com/document/*
+// @match        https://fr.scribd.com/presentation/*
+// @match        https://fr.scribd.com/embeds/*/content*
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
 // @grant        none
 // ==/UserScript==
@@ -26,8 +30,8 @@
     // Create Floating Launcher Button
     const btn = document.createElement('button');
     btn.id = 'sd-launcher-btn';
-    btn.innerHTML = '&#11015; Download';
-    btn.title = 'Toggle Scribd Downloader Ultra';
+    btn.innerHTML = '&#11015; Télécharger';
+    btn.title = 'Afficher/Masquer Scribd Downloader Ultra';
     btn.style.position = 'fixed';
     btn.style.bottom = '20px';
     btn.style.right = '20px';
@@ -192,7 +196,7 @@
                 const embedUrl = `https://www.scribd.com/embeds/${docId}/content`;
                 window.location.href = embedUrl;
             } else {
-                alert('Could not detect document ID from URL.');
+                alert("Impossible de détecter l'ID du document depuis l'URL.");
             }
         }
 
@@ -262,54 +266,54 @@
                 <h3 style="margin:0;color:#1abc9c;font-size:14px;font-weight:bold;letter-spacing:0.5px;">SCRIBD DOWNLOADER <span style="font-size:10px;background:#1abc9c;color:#111;padding:2px 5px;border-radius:3px;font-weight:bold;">v3.5 ULTRA</span></h3>
                 <button id="sd-close" style="background:none;border:none;color:#888;cursor:pointer;font-size:16px;font-weight:bold;line-height:1;">&times;</button>
             </div>
-            
+
             <button id="sd-content" ${inContentMode ? 'disabled' : ''} style="width:100%;background:${inContentMode ? '#27ae60' : '#e67e22'};color:#fff;border:none;padding:9px;cursor:${inContentMode ? 'not-allowed' : 'pointer'};font-weight:bold;font-size:11px;border-radius:5px;margin-bottom:10px;opacity:${inContentMode ? '0.75' : '1'};transition:opacity 0.2s;">
-                ${inContentMode ? '✓ CONTENT MODE ACTIVE' : '⚡ SWITCH TO CONTENT MODE'}
+                ${inContentMode ? '✓ MODE CONTENU ACTIF' : '⚡ PASSER EN MODE CONTENU'}
             </button>
 
             <div style="margin-bottom:10px;background:#242424;padding:8px 10px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;">
-                <span style="color:#aaa;font-size:10px;font-weight:bold;">OTOMATİK TESPİT:</span>
+                <span style="color:#aaa;font-size:10px;font-weight:bold;">DÉTECTION AUTOMATIQUE :</span>
                 <span id="sd-doc-badge" style="font-size:10px;font-weight:bold;padding:3px 7px;border-radius:4px;background:${isDocx ? '#9b59b6' : '#27ae60'};color:#fff;">
-                    ${isDocx ? '📝 METİN / DOCX (Vektörel)' : '📚 RESİMLİ KİTAP (Tam Sayfa)'}
+                    ${isDocx ? '📝 TEXTE / DOCX (Vectoriel)' : '📚 LIVRE IMAGÉ (Page entière)'}
                 </span>
             </div>
 
             <div style="margin-bottom:10px;background:#242424;padding:10px;border-radius:6px;">
-                <div style="color:#aaa;font-size:10px;margin-bottom:6px;text-align:center;font-weight:bold;letter-spacing:0.5px;">İNDİRME MODU (VARSAYILAN: KİTAPLAR)</div>
+                <div style="color:#aaa;font-size:10px;margin-bottom:6px;text-align:center;font-weight:bold;letter-spacing:0.5px;">MODE DE TÉLÉCHARGEMENT (PAR DÉFAUT : LIVRES)</div>
                 <div style="display:flex;gap:5px;flex-direction:column;">
                     <button id="sd-mode-jspdf" style="width:100%;background:#27ae60;color:#fff;border:none;padding:8px 10px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:11px;text-align:left;display:flex;align-items:center;justify-content:space-between;">
-                        <span>📚 AUTO PDF (Tam Sayfa / Yatay-Dikey)</span>
-                        <span style="font-size:9px;background:#fff;color:#27ae60;padding:2px 4px;border-radius:3px;font-weight:bold;">Varsayılan</span>
+                        <span>📚 PDF AUTO (Page entière / Paysage-Portrait)</span>
+                        <span style="font-size:9px;background:#fff;color:#27ae60;padding:2px 4px;border-radius:3px;font-weight:bold;">Par défaut</span>
                     </button>
                     <button id="sd-mode-print" style="width:100%;background:#444;color:#aaa;border:none;padding:8px 10px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:11px;text-align:left;display:flex;align-items:center;justify-content:space-between;">
-                        <span>📝 VEKTÖR BASKI (DOCX / Tablolar)</span>
+                        <span>📝 IMPRESSION VECTORIELLE (DOCX / Tableaux)</span>
                         <span style="font-size:9px;background:#666;color:#fff;padding:2px 4px;border-radius:3px;">DOCX</span>
                     </button>
                     <button id="sd-mode-images" style="width:100%;background:#444;color:#aaa;border:none;padding:8px 10px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:11px;text-align:left;display:flex;align-items:center;justify-content:space-between;">
-                        <span>🖼️ GÖRSELLER (Tek Tek JPG)</span>
+                        <span>🖼️ IMAGES (JPG individuels)</span>
                         <span style="font-size:9px;background:#666;color:#fff;padding:2px 4px;border-radius:3px;">JPG</span>
                     </button>
                 </div>
             </div>
-            
+
             <div style="margin-bottom:10px;background:#242424;padding:10px;border-radius:6px;display:flex;justify-content:space-between;gap:8px;">
                 <div style="flex:1;text-align:center;">
-                    <span style="color:#aaa;display:block;margin-bottom:3px;font-size:10px;">Start Page</span>
+                    <span style="color:#aaa;display:block;margin-bottom:3px;font-size:10px;">Page début</span>
                     <input type="number" id="sd-start" value="1" min="1" max="${initialMax}" style="width:100%;box-sizing:border-box;background:#333;color:#fff;border:1px solid #555;padding:4px;border-radius:4px;text-align:center;font-weight:bold;">
                 </div>
                 <div style="flex:1;text-align:center;">
-                    <span style="color:#aaa;display:block;margin-bottom:3px;font-size:10px;">End Page</span>
+                    <span style="color:#aaa;display:block;margin-bottom:3px;font-size:10px;">Page fin</span>
                     <input type="number" id="sd-end" value="${initialMax}" min="1" max="${initialMax}" style="width:100%;box-sizing:border-box;background:#333;color:#fff;border:1px solid #555;padding:4px;border-radius:4px;text-align:center;font-weight:bold;">
                 </div>
             </div>
 
             <div style="margin-bottom:10px;background:#242424;padding:6px 10px;border-radius:4px;color:#888;font-size:10px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                Doc: <span style="color:#1abc9c;font-weight:bold;">${bookName}</span>
+                Doc : <span style="color:#1abc9c;font-weight:bold;">${bookName}</span>
             </div>
 
             <div style="margin-bottom:12px;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <span id="sd-progress-text" style="color:#bbb;font-size:10px;">Ready</span>
+                    <span id="sd-progress-text" style="color:#bbb;font-size:10px;">Prêt</span>
                     <span id="sd-progress-percent" style="color:#1abc9c;font-size:10px;font-weight:bold;">0%</span>
                 </div>
                 <div style="background:#333;height:8px;border-radius:4px;overflow:hidden;">
@@ -317,10 +321,10 @@
                 </div>
             </div>
 
-            <div id="sd-status" style="margin-bottom:12px;color:#1abc9c;padding:7px 10px;background:#111;border:1px solid #333;border-radius:4px;min-height:18px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ready...</div>
-            
-            <button id="sd-go" style="width:100%;background:#1abc9c;color:#fff;border:none;padding:12px;cursor:pointer;font-weight:bold;font-size:13px;border-radius:5px;letter-spacing:0.5px;transition:background 0.2s;">START DOWNLOAD</button>
-            <div id="sd-hint" style="font-size:10px;color:#888;text-align:center;margin-top:6px;">Kitaplar için tam sayfa (A4 kenar boşluğu olmadan, orijinal yatay/dikey boyutunda) direkt PDF.</div>
+            <div id="sd-status" style="margin-bottom:12px;color:#1abc9c;padding:7px 10px;background:#111;border:1px solid #333;border-radius:4px;min-height:18px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Prêt...</div>
+
+            <button id="sd-go" style="width:100%;background:#1abc9c;color:#fff;border:none;padding:12px;cursor:pointer;font-weight:bold;font-size:13px;border-radius:5px;letter-spacing:0.5px;transition:background 0.2s;">DÉMARRER LE TÉLÉCHARGEMENT</button>
+            <div id="sd-hint" style="font-size:10px;color:#888;text-align:center;margin-top:6px;">PDF direct en page entière (sans marges A4, taille originale paysage/portrait) pour les livres.</div>
         `;
         document.body.appendChild(panel);
 
@@ -363,15 +367,15 @@
             if (mode === 'jspdf') {
                 modeJsPdfBtn.style.background = '#27ae60';
                 modeJsPdfBtn.style.color = '#fff';
-                hintEl.innerText = "Her sayfa kendi orijinal boyutunda (A4 sınırlaması olmadan, yatay/dikey) tam sayfa direkt iner. Baskı penceresi AÇILMAZ.";
+                hintEl.innerText = "Chaque page est téléchargée directement en taille originale (sans restriction A4, paysage/portrait) en page entière. La fenêtre d'impression ne s'ouvre PAS.";
             } else if (mode === 'print') {
                 modePrintBtn.style.background = '#9b59b6';
                 modePrintBtn.style.color = '#fff';
-                hintEl.innerText = "DOCX/tablolu metinler için tarayıcı baskı motoruyla vektörel PDF.";
+                hintEl.innerText = "PDF vectoriel via le moteur d'impression du navigateur pour les DOCX/textes avec tableaux.";
             } else {
                 modeImagesBtn.style.background = '#3498db';
                 modeImagesBtn.style.color = '#fff';
-                hintEl.innerText = "Tüm sayfalar tek tek orijinal JPG olarak indirilir.";
+                hintEl.innerText = "Toutes les pages sont téléchargées individuellement en JPG original.";
             }
         }
 
@@ -396,7 +400,7 @@
             const percent = total > 0 ? Math.min(100, Math.max(0, (current / total) * 100)) : 0;
             progressBar.style.width = percent + '%';
             progressPercent.innerText = Math.round(percent) + '%';
-            progressText.innerText = `Sayfa ${Math.min(pageCounter, maxPages)} / ${maxPages}`;
+            progressText.innerText = `Page ${Math.min(pageCounter, maxPages)} / ${maxPages}`;
         };
 
         /* --- BULLETPROOF PRINT STYLESHEET --- */
@@ -412,9 +416,9 @@
                     }
 
                     /* Hide Downloader UI and Scribd toolbars/overlays */
-                    #sd-panel-v3, [id^="sd-panel"], #sd-launcher-btn, 
-                    .toolbar_drop, .mobile_overlay, .mobile_banner, 
-                    .ad_container, #fullscreen_button, 
+                    #sd-panel-v3, [id^="sd-panel"], #sd-launcher-btn,
+                    .toolbar_drop, .mobile_overlay, .mobile_banner,
+                    .ad_container, #fullscreen_button,
                     iframe, .page_missing, .modal_dialog {
                         display: none !important;
                         visibility: hidden !important;
@@ -439,8 +443,8 @@
                     }
 
                     .auto__embeds_new_show,
-                    .document_scroller, 
-                    .document_container, 
+                    .document_scroller,
+                    .document_container,
                     .outer_page_container {
                         margin: 0 !important;
                         padding: 0 !important;
@@ -682,11 +686,11 @@
         /* --- BUILD NATIVE VARIABLE-DIMENSION & LANDSCAPE/PORTRAIT PDF --- */
         async function buildDirectPDF() {
             if (collectedImages.length === 0) {
-                alert("Hiçbir sayfa görseli toplanamadı!");
+                alert("Aucune image de page n'a pu être collectée !");
                 return;
             }
 
-            log(`PDF oluşturuluyor (${collectedImages.length} sayfa)...`, "#9b59b6");
+            log(`Création du PDF (${collectedImages.length} pages)...`, "#9b59b6");
             const { jsPDF } = window.jspdf;
 
             const first = collectedImages[0];
@@ -712,15 +716,15 @@
                 }
 
                 pdf.addImage(p.dataUrl, 'JPEG', 0, 0, w, h, undefined, 'FAST');
-                log(`PDF'e Sayfa ${i + 1}/${collectedImages.length} ekleniyor (${orient} ${w}x${h}px)...`, "#9b59b6");
+                log(`Ajout de la page ${i + 1}/${collectedImages.length} au PDF (${orient} ${w}x${h}px)...`, "#9b59b6");
                 await wait(10);
             }
 
-            log("PDF kaydediliyor...", "#27ae60");
+            log("Enregistrement du PDF...", "#27ae60");
             pdf.save(`${bookName}.pdf`);
             document.title = originalTitle;
-            log("İndirme Tamamlandı!", "#27ae60");
-            alert("PDF orijinal sayfa boyutları ve yönlendirmeleriyle (yatay/dikey tam sayfa) başarıyla indirildi!");
+            log("Téléchargement terminé !", "#27ae60");
+            alert("Le PDF a été téléchargé avec succès avec les tailles et orientations originales des pages (page entière paysage/portrait) !");
         }
 
         /* --- DIRECT IMAGE SAVER --- */
@@ -783,10 +787,10 @@
 
                     if (downloadMode === 'jspdf') {
                         await buildDirectPDF();
-                        goBtn.innerText = "TAMAMLANDI";
+                        goBtn.innerText = "TERMINÉ";
                         goBtn.style.background = "#27ae60";
                     } else if (downloadMode === 'print') {
-                        log("Tüm sayfalar yüklendi! Vektörel Baskı açılıyor...", "#27ae60");
+                        log("Toutes les pages sont chargées ! Ouverture de l'impression vectorielle...", "#27ae60");
                         ensurePrintStyles();
 
                         for (let p = 1; p <= initialMax; p++) {
@@ -803,26 +807,26 @@
                         window.scrollTo(0, 0);
                         await wait(300);
 
-                        goBtn.innerText = "BASKI PENCERESİNİ AÇ";
+                        goBtn.innerText = "OUVRIR LA FENÊTRE D'IMPRESSION";
                         goBtn.style.background = "#27ae60";
 
                         await triggerCleanPrint();
                     } else {
-                        log("Tüm Görseller İndirildi!", "#27ae60");
-                        alert("Görseller başarıyla indirildi!");
-                        goBtn.innerText = "TAMAMLANDI";
+                        log("Toutes les images ont été téléchargées !", "#27ae60");
+                        alert("Les images ont été téléchargées avec succès !");
+                        goBtn.innerText = "TERMINÉ";
                         goBtn.style.background = "#27ae60";
                     }
                     break;
                 }
 
                 updateProgress();
-                log(`Sayfa ${pageCounter} işleniyor...`, "#fff");
+                log(`Traitement de la page ${pageCounter}...`, "#fff");
 
                 const pageEl = await resolvePage(pageCounter);
 
                 if (!pageEl) {
-                    log(`Sayfa ${pageCounter} yüklenemedi. Durduruldu.`, "#e74c3c");
+                    log(`La page ${pageCounter} n'a pas pu être chargée. Arrêt.`, "#e74c3c");
                     isRunning = false;
                     break;
                 }
@@ -833,7 +837,7 @@
                     if (verifiedType !== docType) {
                         docType = verifiedType;
                         isDocx = docType === 'docx';
-                        docBadge.innerText = isDocx ? '📝 METİN / DOCX (Vektörel)' : '📚 RESİMLİ KİTAP (Tam Sayfa)';
+                        docBadge.innerText = isDocx ? '📝 TEXTE / DOCX (Vectoriel)' : '📚 LIVRE IMAGÉ (Page entière)';
                         docBadge.style.background = isDocx ? '#9b59b6' : '#27ae60';
                     }
                 }
@@ -842,12 +846,12 @@
                     const imgObj = await fetchImageObject(pageEl, pageCounter);
                     if (imgObj) {
                         collectedImages.push(imgObj);
-                        log(`Sayfa ${pageCounter} alındı (${collectedImages.length} hazır)...`, "#27ae60");
+                        log(`Page ${pageCounter} capturée (${collectedImages.length} prêtes)...`, "#27ae60");
                     }
                 } else if (downloadMode === 'images') {
                     const imgObj = await fetchImageObject(pageEl, pageCounter);
                     if (imgObj) {
-                        log(`Sayfa ${pageCounter} JPG kaydediliyor...`, "#27ae60");
+                        log(`Enregistrement de la page ${pageCounter} en JPG...`, "#27ae60");
                         await saveSingleImage(imgObj, pageCounter);
                         await wait(250);
                     }
@@ -861,21 +865,21 @@
 
         /* --- START / RESUME HANDLER --- */
         goBtn.onclick = async () => {
-            if (goBtn.innerText === "BASKI PENCERESİNİ AÇ") {
+            if (goBtn.innerText === "OUVRIR LA FENÊTRE D'IMPRESSION") {
                 await triggerCleanPrint();
                 return;
             }
 
             if (isRunning) {
                 isRunning = false;
-                goBtn.innerText = "DEVAM ET";
+                goBtn.innerText = "CONTINUER";
                 goBtn.style.background = "#1abc9c";
-                log("Duraklatıldı.", "#f39c12");
+                log("Mis en pause.", "#f39c12");
                 return;
             }
 
             if (!isContentMode()) {
-                if (confirm("İndirme işleminin paywall/bulanıklık engeline takılmaması için CONTENT MODE önerilir.\nContent Mode'a geçilsin mi?")) {
+                if (confirm("Le MODE CONTENU est recommandé pour éviter le paywall/flou.\nPasser en Mode Contenu ?")) {
                     goToContentMode();
                     return;
                 }
@@ -886,13 +890,13 @@
             startPageNum = pageCounter;
             maxPages = parseInt(endInput.value);
 
-            if (goBtn.innerText !== "DEVAM ET") {
+            if (goBtn.innerText !== "CONTINUER") {
                 collectedImages = [];
             }
 
-            goBtn.innerText = "DURDUR";
+            goBtn.innerText = "ARRÊTER";
             goBtn.style.background = "#e74c3c";
-            log("İndirme başlatılıyor...", "#fff");
+            log("Démarrage du téléchargement...", "#fff");
             updateProgress();
 
             startLoop();
